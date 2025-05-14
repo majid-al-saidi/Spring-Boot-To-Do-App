@@ -36,4 +36,15 @@ public class HomeController {
         tasks.removeIf(task->id.equals(task.getId()));
         return "redirect:/";
     }
+
+    @PostMapping("/toggle/{id}")
+    public String toggleTask(@PathVariable Long id) {
+        for (Task task : tasks) {
+            if (task.getId().equals(id)) {
+                task.setCompleted(!task.isCompleted());
+                break;
+            }
+        }
+        return "redirect:/";
+    }
 }
