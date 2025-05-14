@@ -6,10 +6,20 @@
 <body>
 <h1>My To-Do List</h1>
 
+<!-- Form to add task -->
+<form th:action="@{/add}" th:object="${task}" method="post">
+    <input type="text" th:field="*{title}" placeholder="New task" required />
+    <button type="submit">Add</button>
+</form>
+
+<hr/>
+
+<!-- Show tasks -->
 <ul>
     <li th:each="task : ${tasks}">
         <span th:text="${task.title}"></span>
         <span th:text="${task.completed ? '✅' : '❌'}"></span>
+        <a th:href="@{'/delete/' + ${task.id}}">🗑️ Delete</a>
     </li>
 </ul>
 

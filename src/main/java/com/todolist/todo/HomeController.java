@@ -2,23 +2,38 @@ package com.todolist.todo;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 public class HomeController {
 
+    // create new task object:
+    private List<Task> tasks = new ArrayList<>();
+    private AtomicLong idCounter = new AtomicLong(1);
+
+
     @GetMapping("/")
     public String home(Model model) {
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(new Task(1L , "Learning Java", false));
-        tasks.add(new Task(2L, "Buy milk", false));
-        tasks.add(new Task(3L, "Finish homework", true));
-        tasks.add(new Task(4L, "Read a book", false));
-
-        model.addAttribute("tasks" , tasks);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("task", new Task()); // Empty task for the form
         return "index";
+    }
+
+    @PostMapping("/add")
+    public String addTask(@ModelAttribute Task task) {
+        task.setId(idCounter.getAndIncrement());
+        tasks.add(task);
+        return "redirect:/"; // Go back to homepage after adding
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteTask(@PathVariable Long id) {
+        tasks.removeIf(task->id.equals(task.getId()));
+        return "redirect:/";
     }
 }

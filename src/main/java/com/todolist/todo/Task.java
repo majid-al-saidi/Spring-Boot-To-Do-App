@@ -5,21 +5,19 @@ public class Task {
     private String title;
     private boolean completed;
 
-    // Constructors
     public Task() {}
 
-    public Task(Long id, String title, boolean completed){
+    public Task(Long id, String title, boolean completed) {
         this.id = id;
         this.title = title;
         this.completed = completed;
     }
 
-    // Getters and setters
-    public Long getID(){
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id){
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -38,5 +36,4 @@ public class Task {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
-
 }
