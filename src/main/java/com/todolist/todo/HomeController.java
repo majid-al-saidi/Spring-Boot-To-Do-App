@@ -2,9 +2,11 @@ package com.todolist.todo;
 
 import com.todolist.todo.models.Task;
 import com.todolist.todo.repositories.TaskRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -21,10 +23,19 @@ public class HomeController {
     }
 
     @PostMapping("/add")
-    public String addTask(@ModelAttribute Task task) {
+    public String addTask(@Valid @ModelAttribute("task") Task task,
+                          BindingResult result,
+                          Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("tasks", taskRepository.findAll()); // Required!
+            return "index"; // Stay on the same page
+        }
+
         taskRepository.save(task);
-        return "redirect:/";
+        return "redirect:/"; // Clean redirect after success
     }
+
 
     @PostMapping("/toggle/{id}")
     public String toggleTask(@PathVariable Long id) {
