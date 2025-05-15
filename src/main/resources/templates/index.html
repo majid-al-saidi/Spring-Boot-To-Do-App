@@ -12,30 +12,47 @@
         <div
             class="relative flex flex-col w-1/2 rounded-[10px] border-[1px] border-gray-200 bg-white bg-clip-border shadow-md shadow-[#F3F3F3] dark:border-[#ffffff33] dark:!bg-navy-800 dark:text-white dark:shadow-none pb-7 p-[20px]">
             <!-- Title -->
-            <div class="relative flex flex-row justify-between">
-                <div class="flex items-center">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 dark:bg-white/5">
-                        <svg stroke="currentColor" fill="currentColor" viewBox="0 0 24 24"
-                            class="h-6 w-6 text-brand-500 dark:text-white" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                        </svg>
+            <div class="mt-4">
+                <div class="flex items-center justify-between p-2">
+                    <div class="flex items-center justify-center gap-2">
+                        <div
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 dark:bg-white/5">
+                            <svg stroke="currentColor" fill="currentColor" viewBox="0 0 24 24"
+                                class="h-6 w-6 text-brand-500 dark:text-white" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                            </svg>
+                        </div>
+                        <h4 class="ml-4 text-xl font-bold text-navy-700 dark:text-white">
+                            Tasks
+                        </h4>
                     </div>
-                    <h4 class="ml-4 text-xl font-bold text-navy-700 dark:text-white">
-                        Tasks
-                    </h4>
+                    <div>
+                        <div class="flex mb-4">
+                            <div class="flex gap-3 mb-4">
+                                <a href="/" class="text-sm text-gray-700 font-semibold hover:text-indigo-500">All</a>
+                                <a href="/filter?status=complete"
+                                    class="text-sm text-green-600 font-semibold hover:text-green-800">Completed</a>
+                                <a href="/filter?status=incomplete"
+                                    class="text-sm text-red-600 font-semibold hover:text-red-800">Incomplete</a>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Add Task Form -->
-            <form th:action="@{/add}" th:object="${task}" method="post" class="mt-4 flex gap-2">
-                <input th:field="*{title}" type="text" placeholder="Add new task"
+            <form th:action="@{${task.id != null} ? '/update/' + ${task.id} : '/add'}" th:object="${task}" method="post"
+                class="mt-4 flex gap-2">
+                <input th:field="*{title}" type="text"
+                    th:placeholder="${task.id != null} ? 'Update task title' : 'Add new task'"
                     class="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 <div th:if="${#fields.hasErrors('title')}" class="text-red-500 text-sm mt-1">
                     <p th:errors="*{title}"></p>
                 </div>
                 <button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600">
-                    Add
+                    <span th:text="${task.id != null} ? 'Update' : 'Add'"></span>
                 </button>
             </form>
 
@@ -52,6 +69,9 @@
                             th:class="${task.completed} ? 'text-base font-bold text-navy-700 dark:text-white line-through' : 'text-base font-bold text-navy-700 dark:text-white'">
                         </p>
                     </div>
+                    <a th:href="@{'/edit/' + ${task.id}}" class="text-indigo-500 hover:text-indigo-700 text-sm ml-2">
+                        Edit
+                    </a>
                     <a th:href="@{'/delete/' + ${task.id}}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 hover:text-red-700"
                             fill="none" viewBox="0 0 24 24" stroke="currentColor">

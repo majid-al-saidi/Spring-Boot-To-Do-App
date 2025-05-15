@@ -1,4 +1,5 @@
 package com.todolist.todo.models;
+
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,7 +23,8 @@ public class Task {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public Task() {}
+    public Task() {
+    }
 
     public Task(Long id, String title, boolean completed) {
         this.id = id;
@@ -53,4 +55,5 @@ public class Task {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
 }
