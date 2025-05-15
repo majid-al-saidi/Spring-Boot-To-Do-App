@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class HomeController {
@@ -28,15 +29,17 @@ public class HomeController {
     @PostMapping("/add")
     public String addTask(@Valid @ModelAttribute("task") Task task,
             BindingResult result,
+            RedirectAttributes redirectAttributes,
             Model model) {
 
         if (result.hasErrors()) {
-            model.addAttribute("tasks", taskRepository.findAll()); // Required!
-            return "index"; // Stay on the same page
+            model.addAttribute("tasks", taskRepository.findAll());
+            return "index";
         }
 
         taskRepository.save(task);
-        return "redirect:/"; // Clean redirect after success
+        redirectAttributes.addFlashAttribute("success", "Task added successfully!");
+        return "redirect:/";
     }
 
     @PostMapping("/toggle/{id}")
@@ -57,11 +60,13 @@ public class HomeController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateTask(@PathVariable Long id, @ModelAttribute("task") Task updatedTask) {
+    public String updateTask(@PathVariable Long id, @ModelAttribute("task") Task updatedTask,
+            RedirectAttributes redirectAttributes) {
         Task existing = taskRepository.findById(id).orElse(null);
         if (existing != null) {
             existing.setTitle(updatedTask.getTitle());
             taskRepository.save(existing);
+            redirectAttributes.addFlashAttribute("success", "Task updated!");
         }
         return "redirect:/";
     }
@@ -84,8 +89,9 @@ public class HomeController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteTask(@PathVariable Long id) {
+    public String deleteTask(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         taskRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("success", "Task deleted.");
         return "redirect:/";
     }
 }

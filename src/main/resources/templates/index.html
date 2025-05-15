@@ -55,7 +55,9 @@
                     <span th:text="${task.id != null} ? 'Update' : 'Add'"></span>
                 </button>
             </form>
-
+            <div th:if="${success}" class="bg-green-100 text-green-500 px-4 py-2 rounded mb-4">
+                <p th:text="${success}"></p>
+            </div>
             <!-- Task List -->
             <div class="mt-4" th:each="task : ${tasks}">
                 <div class="flex items-center justify-between p-2">
