@@ -94,4 +94,9 @@ public class HomeController {
         redirectAttributes.addFlashAttribute("success", "Task deleted.");
         return "redirect:/";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }
