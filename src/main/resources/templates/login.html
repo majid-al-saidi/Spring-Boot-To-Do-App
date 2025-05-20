@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@100;200;300;400;500;600;700&family=Noto+Sans+Arabic:wght@100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Arabic', 'IBM Plex Sans Arabic', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
+
+<body dir="rtl" class="flex items-center justify-center min-h-screen bg-gray-100">
     <form method="post" action="/login" class="bg-white p-8 rounded shadow-md w-96">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <h2 class="text-2xl font-bold mb-6 text-center">تسجيل الدخول</h2>
@@ -30,6 +42,7 @@
             اسم المستخدم أو كلمة المرور غير صحيحة
         </div>
     </form>
-    
+
 </body>
+
 </html>

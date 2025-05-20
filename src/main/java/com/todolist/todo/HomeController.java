@@ -61,7 +61,7 @@ public class HomeController {
         task.setUser(currentUser);
         taskRepository.save(task);
 
-        redirectAttributes.addFlashAttribute("success", "Task added successfully!");
+        redirectAttributes.addFlashAttribute("success", "تم إضافة المهمة بنجاح!");
         return "redirect:/";
     }
 
@@ -98,7 +98,7 @@ public class HomeController {
         if (existing != null) {
             existing.setTitle(updatedTask.getTitle());
             taskRepository.save(existing);
-            redirectAttributes.addFlashAttribute("success", "Task updated!");
+            redirectAttributes.addFlashAttribute("success", "تم تحديث المهمة بنجاح!");
         }
         return "redirect:/";
     }
@@ -123,7 +123,7 @@ public class HomeController {
     @GetMapping("/delete/{id}")
     public String deleteTask(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         taskRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("success", "Task deleted.");
+        redirectAttributes.addFlashAttribute("success", "تم حذف المهمة بنجاح!");
         return "redirect:/";
     }
 
