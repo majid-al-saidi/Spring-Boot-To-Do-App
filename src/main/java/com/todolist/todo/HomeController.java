@@ -1,7 +1,9 @@
 package com.todolist.todo;
 
 import com.todolist.todo.models.Task;
+import com.todolist.todo.models.User;
 import com.todolist.todo.repositories.TaskRepository;
+import com.todolist.todo.utils.AuthUtils;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -12,35 +14,57 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.todolist.todo.repositories.UserRepository;
 
 @Controller
 public class HomeController {
 
     @Autowired
     private TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
+    public HomeController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     @GetMapping("/")
     public String home(Model model) {
-        model.addAttribute("tasks", taskRepository.findAll());
+        User currentUser = AuthUtils.getCurrentUser(userRepository);
+        List<Task> tasks = taskRepository.findByUser(currentUser);
+        model.addAttribute("tasks", tasks);
         model.addAttribute("task", new Task());
         return "index";
     }
 
     @PostMapping("/add")
     public String addTask(@Valid @ModelAttribute("task") Task task,
-            BindingResult result,
-            RedirectAttributes redirectAttributes,
-            Model model) {
+                          BindingResult result,
+                          RedirectAttributes redirectAttributes,
+                          Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("tasks", taskRepository.findAll());
             return "index";
         }
 
+        // Get the current user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User currentUser = userRepository.findByUsername(username).orElse(null);
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        // 🛠️ اربط المستخدم قبل الحفظ
+        task.setUser(currentUser);
         taskRepository.save(task);
+
         redirectAttributes.addFlashAttribute("success", "Task added successfully!");
         return "redirect:/";
     }
+
 
     @PostMapping("/toggle/{id}")
     public String toggleTask(@PathVariable Long id) {
@@ -52,12 +76,20 @@ public class HomeController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editTask(@PathVariable Long id, Model model) {
+    public String editTask(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        if (!ownsTask(id)) {
+            redirectAttributes.addFlashAttribute("fail", "غير مسموح");
+            return "redirect:/";
+        }
         Task task = taskRepository.findById(id).orElse(null);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsername(username).orElse(null);
         model.addAttribute("task", task);
-        model.addAttribute("tasks", taskRepository.findAll());
+        model.addAttribute("tasks", taskRepository.findByUser(currentUser));
         return "index";
     }
+
+
 
     @PostMapping("/update/{id}")
     public String updateTask(@PathVariable Long id, @ModelAttribute("task") Task updatedTask,
@@ -99,4 +131,13 @@ public class HomeController {
     public String login() {
         return "login";
     }
+
+    private boolean ownsTask(Long taskId) {
+        User currentUser = AuthUtils.getCurrentUser(userRepository);
+        if (currentUser == null) return false;
+
+        Task task = taskRepository.findById(taskId).orElse(null);
+        return task != null && task.getUser().getId().equals(currentUser.getId());
+    }
+
 }
